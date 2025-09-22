@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -5,16 +6,14 @@
 #include <sstream>
 #include <chrono> // For timing
 
-using namespace std;
-
 // --- Linked List Implementation ---
 
 // Node for the linked list
 struct Node {
-    string word;
+    std::string word;
     Node* next;
 
-    Node(string w) : word(w), next(nullptr) {}
+    Node(std::string w) : word(w), next(nullptr) {}
 };
 
 // LinkedList class
@@ -34,14 +33,14 @@ public:
         }
     }
 
-    void insert(const string& word) {
+    void insert(const std::string& word) {
         // Insert at the beginning for O(1) insertion time
         Node* newNode = new Node(word);
         newNode->next = head;
         head = newNode;
     }
 
-    bool search(const string& word) {
+    bool search(const std::string& word) {
         Node* current = head;
         while (current != nullptr) {
             if (current->word == word) {
@@ -57,11 +56,11 @@ public:
 
 class HashTable {
 private:
-    vector<LinkedList> table;
+    std::vector<LinkedList> table;
     int table_size;
 
     // Hash function: sum of ASCII values % table_size
-    int hash_function(const string& key) {
+    int hash_function(const std::string& key) {
         long long sum = 0; // Use long long to prevent overflow for long strings
         for (char ch : key) {
             sum += ch;
@@ -74,12 +73,12 @@ public:
         table.resize(table_size);
     }
 
-    void insert(const string& word) {
+    void insert(const std::string& word) {
         int index = hash_function(word);
         table[index].insert(word);
     }
 
-    bool search(const string& word) {
+    bool search(const std::string& word) {
         int index = hash_function(word);
         return table[index].search(word);
     }
@@ -88,7 +87,7 @@ public:
 // --- Helper Functions ---
 
 // Function to clean a word by removing trailing punctuation and converting to lowercase
-string clean_word(string word) {
+std::string clean_word(std::string word) {
     // Remove trailing punctuation
     while (!word.empty() && (ispunct(word.back()))) {
         word.pop_back();
@@ -104,34 +103,34 @@ string clean_word(string word) {
 
 int main() {
     int choice;
-    cout << "Choose a data structure to use:" << endl;
-    cout << "[1] Hash Table (mod 20)" << endl;
-    cout << "[2] Hash Table (mod 450)" << endl;
-    cout << "[3] Linked List" << endl;
-    cout << "Enter your choice: ";
-    cin >> choice;
+    std::cout << "Choose a data structure to use:" << std::endl;
+    std::cout << "[1] Hash Table (mod 20)" << std::endl;
+    std::cout << "[2] Hash Table (mod 450)" << std::endl;
+    std::cout << "[3] Linked List" << std::endl;
+    std::cout << "Enter your choice: ";
+    std::cin >> choice;
 
     if (choice < 1 || choice > 3) {
-        cout << "Invalid choice. Exiting." << endl;
+        std::cout << "Invalid choice. Exiting." << std::endl;
         return 1;
     }
 
     // --- Load Dictionary ---
-    ifstream dict_file("dictionary.txt");
+    std::ifstream dict_file("dictionary.txt");
     if (!dict_file) {
-        cerr << "Error: Could not open dictionary.txt" << endl;
+        std::cerr << "Error: Could not open dictionary.txt" << std::endl;
         return 1;
     }
 
     HashTable ht_mod20(20);
     HashTable ht_mod450(450);
     LinkedList ll;
-    string word;
+    std::string word;
 
-    auto start = chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
 
     while (dict_file >> word) {
-        string cleaned = clean_word(word);
+        std::string cleaned = clean_word(word);
         if (!cleaned.empty()) {
             switch (choice) {
                 case 1: ht_mod20.insert(cleaned); break;
@@ -142,24 +141,24 @@ int main() {
     }
     dict_file.close();
 
-    auto end = chrono::high_resolution_clock::now();
-    chrono::duration<double, milli> load_time = end - start;
-    cout << "\nDictionary loaded in " << load_time.count() << " ms." << endl;
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> load_time = end - start;
+    std::cout << "\nDictionary loaded in " << load_time.count() << " ms." << std::endl;
 
     // --- Sentence Validation ---
-    cout << "\nEnter a sentence to check: ";
-    cin.ignore(); // Consume the newline character left by cin >> choice
-    string sentence;
-    getline(cin, sentence);
+    std::cout << "\nEnter a sentence to check: ";
+    std::cin.ignore(); // Consume the newline character left by std::cin >> choice
+    std::string sentence;
+    std::getline(std::cin, sentence);
 
-    stringstream ss(sentence);
-    vector<string> not_found_words;
+    std::stringstream ss(sentence);
+    std::vector<std::string> not_found_words;
     bool all_found = true;
 
-    start = chrono::high_resolution_clock::now();
+    start = std::chrono::high_resolution_clock::now();
 
     while (ss >> word) {
-        string cleaned = clean_word(word);
+        std::string cleaned = clean_word(word);
         if (cleaned.empty()) continue;
 
         bool found = false;
@@ -175,22 +174,22 @@ int main() {
         }
     }
 
-    end = chrono::high_resolution_clock::now();
-    chrono::duration<double, milli> search_time = end - start;
+    end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> search_time = end - start;
 
     // --- Print Results ---
     if (all_found) {
-        cout << "True" << endl;
+        std::cout << "True" << std::endl;
     } else {
-        cout << "False" << endl;
-        cout << "Words not found: ";
+        std::cout << "False" << std::endl;
+        std::cout << "Words not found: ";
         for (size_t i = 0; i < not_found_words.size(); ++i) {
-            cout << not_found_words[i] << (i == not_found_words.size() - 1 ? "" : ", ");
+            std::cout << not_found_words[i] << (i == not_found_words.size() - 1 ? "" : ", ");
         }
-        cout << endl;
+        std::cout << std::endl;
     }
     
-    cout << "Sentence checked in " << search_time.count() << " ms." << endl;
+    std::cout << "Sentence checked in " << search_time.count() << " ms." << std::endl;
 
     return 0;
 }
